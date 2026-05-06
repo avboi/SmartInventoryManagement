@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace SmartInventoryManagement;
 
 public class ItemManager
@@ -6,7 +8,7 @@ public class ItemManager
     private static EFC efc = new EFC();
     public ItemManager()
     {
-        items = new List<Item?>();
+        items = efc.Items.ToList();
     }
 
     public List<Item> GetItems()
@@ -14,7 +16,7 @@ public class ItemManager
         return items;
     }
 
-    public void AddItem(String code, String itemName, String itemName2, String supplier, String itemBarcodeID)
+    public void AddItem(int code, String itemName, String itemName2, String supplier, String itemBarcodeID)
     {
 
         Item item = new Item(code, itemName, itemName2, supplier, itemBarcodeID);
@@ -39,6 +41,8 @@ public class ItemManager
             {
                 found = true;
                 items.Remove(item);
+                efc.Items.Where(i => i.itemName == itemName).ExecuteDelete();
+                efc.SaveChanges();
                 Console.WriteLine($"{itemName} removed");
                 break;
             }
@@ -60,6 +64,8 @@ public class ItemManager
             {
                 found = true;
                 items.Remove(item);
+                efc.Items.Where(i => i.barcodeID == itemBarcode).ExecuteDelete();
+                efc.SaveChanges();
                 break;
             }
         }
